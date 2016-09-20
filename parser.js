@@ -8,7 +8,7 @@ var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
 
 
-var API_KEY = "5188ca56b0ba8514218671254116be6fc130ec6d";
+var API_KEY = "";
 var AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
 
 var alchemy_language = new AlchemyLanguageV1({
