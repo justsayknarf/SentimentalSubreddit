@@ -1,0 +1,58 @@
+@import reset
+
+=transition($trans)
+  -webkit-transition: $trans
+  -moz-transition: $trans
+  -ms-transition: $trans
+  -o-transition: $trans
+  transition: $trans
+
+body
+  margin: 0
+  font-family: 'Poiret One', cursive
+  font-weight: normal
+
+.search
+  position: relative
+  max-width: 60%
+  margin: 1rem auto 0 auto
+
+  .fa-search
+    position: absolute
+    right: 1em
+    top: 0.6em
+    color: #D3D3D3
+
+header
+  background: white
+  text-align: center
+  width: 100%
+
+  h1
+    font-size: 2em
+    text-align: center
+    padding: 0.5em
+
+.center
+  text-align: center
+
+.mainContainer
+  width: 100%
+  max-width: 75rem
+  margin: 2em auto
+  border: 1px solid #F5F5F5
+
+.loading
+  padding: 1em
+  color: #A0A0A0
+
+.listContainer
+  padding: 5em
+
+  .column
+    padding-left: .2em
+    padding-right: .2em
+    text-align: center
+
+.row 
+  margin-top: 1em

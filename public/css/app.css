@@ -1,0 +1,79 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: "";
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+body {
+  -webkit-text-size-adjust: none; }
+
+body {
+  margin: 0;
+  font-family: "Poiret One", cursive;
+  font-weight: normal; }
+
+.search {
+  position: relative;
+  max-width: 60%;
+  margin: 1rem auto 0 auto; }
+  .search .fa-search {
+    position: absolute;
+    right: 1em;
+    top: 0.6em;
+    color: #D3D3D3; }
+
+header {
+  background: white;
+  text-align: center;
+  width: 100%; }
+  header h1 {
+    font-size: 2em;
+    text-align: center;
+    padding: 0.5em; }
+
+.center {
+  text-align: center; }
+
+.mainContainer {
+  width: 100%;
+  max-width: 75rem;
+  margin: 2em auto;
+  border: 1px solid #F5F5F5; }
+
+.loading {
+  padding: 1em;
+  color: #A0A0A0; }
+
+.listContainer {
+  padding: 5em; }
+  .listContainer .column {
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+    text-align: center; }
+
+.row {
+  margin-top: 1em; }
+
+/*# sourceMappingURL=app.css.map */
