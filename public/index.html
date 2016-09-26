@@ -18,93 +18,137 @@
 
       <link href="http://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet" type="text/css">
 
-      <link href="http://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet" type="text/css">
       <link href="/public/css/app.css" rel="stylesheet" type="text/css">
 <!--       <link href="/public/css/main.css" rel="stylesheet" type="text/css"> -->
    </head>
 
-   <body>
+   <body ng-controller="subrController">
       <header>
-         <h1 class="clementine-text">Sentimental Subreddits</p>
+         <h1 class="clementine-text">Sentimental Subreddits</h1>
+         <div class="search">
+         <form name="searchForm" ng-submit="submitSearch()" novalidate>
+            <span ng-show="subrSearch.name.length > 0" ng-click="clearSearch()" class="fa fa-close"></span>
+            <span ng-hide="subrSearch.name.length > 0" class="fa fa-search"></span>
+            <input type="search" placeholder="Look up a subreddit" ng-model="subrSearch.name" ng-disabled="loading">
+
+            <!-- <button type="submit" class="button">Submit</button> -->
+         </form>
+         <span ng-show="loading"> LOADING DATA, SIT TIGHT </span>
+      </div>
       </header>
 
-   
-      <div class="mainContainer" ng-controller="subrController">
+      <div class="graphContainer">
+            <canvas id="radar" class="chart chart-radar"
+                    chart-data="data" chart-options="options" chart-labels="labels">
+            </canvas>
+            <div class="row emotion">
+            <ul>
+            <li><p>Anger: {{ anger }}</p></li>
+            <li><p>Disgust: {{ disgust }}</p></li>
+            <li><p>Fear: {{ fear }}</p></li>
+            <li><p>Joy: {{ joy }}</p></li>
+            <li><p>Sadness: {{ sadness }}</p> </li>      
+            </ul>
+            </div>
+      </div>
 
-         <div class="search">
-            <form name="searchForm" ng-submit="submitSearch()" novalidate>
-               <span class="fa fa-search"></span>
-               <input type="search" placeholder="Look up a subreddit" ng-model="subrSearch.name">
+      <div class="mainContainer">
+         <div class="graphContainer">
+            <canvas id="radar" class="chart chart-radar"
+                    chart-data="data" chart-options="options" chart-labels="labels">
+            </canvas>
+         </div>
+         
 
-               <button type="submit" class="button">Submit</button>
-            </form>
+         <div class="row">
+            <div class="small-12 columns">
+               <div class="alert">
+                  <p>Sort Type: {{ sortType }}</p>
+                  <p>Sort Reverse: {{ sortReverse }}</p>
+                  <p>Search Query: {{ subrSearch }}</p>        
+               </div>
+            </div>
          </div>
 
          <div class="row">
-
-            <div class="alert alert-info">
-               <p>Sort Type: {{ sortType }}</p>
-               <p>Sort Reverse: {{ sortReverse }}</p>
-               <p>Search Query: {{ subrSearch }}</p>
-            </div>
-
-         <table class="table table-bordered table-striped">
-            <thead>
-               <tr>
-                  <td>
-                  <a href="#" ng-click="sortType = 'name'; sortReverse = !sortReverse">
-                     Subreddits 
-                     <span ng-show="sortType == 'name'" class="fa fa-caret-down"></span>
-                  </a>
-                  </td>
-                  <td>
-                  <a href="#" ng-click="sortType = 'sentiment'; sortReverse = !sortReverse">
-                  Overall Sentiment 
-                  <span ng-show="sortType == 'sentiment'" class="fa fa-caret-down"></span>
-                  </a>
-                  </td>
-                  <td>
-                  <a href="#" ng-click="sortType = 'lastUpdated'; sortReverse = !sortReverse">
-                  Last Updated
-                  <span ng-show="sortType == 'lastUpdated'" class="fa fa-caret-down"></span>
-                  </a>
-                  </td>
-               </tr>
-            </thead>
-
-            <tbody>
-               <tr ng-repeat="subreddit in subrList | orderBy:sortType:sortReverse | filter:subrSearch">
-                  <td>{{ subreddit.name }}</td>
-                  <td>0</td>
-                  <td>{{ subreddit.lastUpdated }}</td>
-               </tr>
-               {{subrList.length}}
-               <p ng-hide="subrList.length">Subreddit not in database yet! <a ng-click="addSubreddit(subrSearch)">Add?</a></p>
-            </tbody> 
-         </table>
+            <p ><span ng-hide="subrList.length > filtered.length">{{subrList.length}} subreddits! </span><span ng-hide="filtered.length === subrList.length">{{filtered.length}} filtered subreddits. </span>
+            <a href="#" ng-show="subrSearch.name.length > 0" ng-click="clearSearch()">Clear filter</a></p><br>
+            <p ></p>
+            <p ng-hide="filtered.length">Subreddit not in database yet! <a ng-click="submitSearch()">Add?</a></p>
          </div>
-<hr>
-         <h2>Subreddits: </h2>
-         <div class="row" ng-repeat="subreddit in subrList">
-            <a href="#" ng-click="showTopPosts($index, subreddit._id)">{{subreddit.name}} </a>
-
-            <div ng-show="showPosts[$index]" class="row">
-               {{ postData[subreddit.id] }}
-               <div ng-repeat="post in postData[subreddit._id].posts">
-                  <a href="{{redditUrl + post.url}}">{{post.title}}</a>
-                  <br>
-                  Sentiment: {{post.sentimentType}} // Score: {{post.sentimentScore}}
-                  <hr>  
-               </div>
-               
+         <div class="row">
+            <div class="small-12 columns">
+               <table class="table table-bordered table-striped">
+                  <thead>
+                     <tr>
+                        <td>
+                        <a href="#" ng-click="sortType = 'name'; sortReverse = !sortReverse">
+                           Subreddits 
+                           <span ng-show="sortType == 'name'" class="fa fa-caret-down"></span>
+                        </a>
+                        </td>
+                        <td>
+                        <a href="#" ng-click="sortType = 'sentiment'; sortReverse = !sortReverse">
+                        Overall Sentiment 
+                        <span ng-show="sortType == 'sentiment'" class="fa fa-caret-down"></span>
+                        </a>
+                        </td>
+                        <td>
+                        <a href="#" ng-click="sortType = 'lastUpdated'; sortReverse = !sortReverse">
+                        Last Updated
+                        <span ng-show="sortType == 'lastUpdated'" class="fa fa-caret-down"></span>
+                        </a>
+                        </td>
+                     </tr>
+               </thead>
+               <tbody>
+                  <tr ng-repeat="subreddit in subrList | orderBy:sortType:sortReverse | filter:subrSearch as filtered" ng-mouseover="loadChart(subreddit)">
+                     <td ng-click="loadPosts(subreddit._id)">{{ subreddit.name }}</td>
+                     <td>{{ subreddit.sentimentScore }}</td>
+                     <td>{{ subreddit.lastUpdated | date:'yyyy-MM-dd' }}</td>
+                  </tr>
+               </tbody> 
+            </table> 
             </div>
+         </div>
+
+      <hr>
+      <div class="row">
+         <div class="small-12 columns">
+            <h2>Posts for subreddit: {{ selectedSubr.name }}</h2>
          </div>
       </div>
-   
+      <div class="row">
+      <ul>
+         <li ng-repeat="post in selectedSubr.posts">
+            <div class="row"> 
+            <div class="large-2 columns">
+               <div id="sentiColor" ng-class="post.sentimentType"></div>
+            </div>
+            <div class="large-10 columns">
+            <a ng-mouseover="loadChart(post)" href="{{redditUrl + post.url}}">{{post.title}}</a><br>
+            Sentiment: {{post.sentimentType}} <span ng-hide="post.sentimentType === 'neutral'">// Score: {{post.sentimentScore}} </span>
+            </div>
+            </div>
+            <hr>  
+         </li>
+      </ul>
+      </div>
+
+   </div>
+
 
       <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+      
       <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-resource.min.js"></script>
+
+      <script src="/public/scripts/Chart.min.js"></script>
+      <script src="/public/scripts/angular-chart.min.js"></script>
+
       <script type="text/javascript" src="controllers/subrController.client.js"></script>
+
+
+
    </body>
 
 </html>

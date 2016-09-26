@@ -3,7 +3,7 @@ var monggose = require("mongoose");
 var Subreddit = require("./app/models/subreddit");
 var Post = require("./app/models/post");
 
-var parse = require("./app/middleware/parser.js");
+var parser = require("./app/middleware/parser.js");
 
 var seeds = {};
 
@@ -26,38 +26,38 @@ var data = [
 var samplePosts = [ {
             url: "https://www.reddit.com/r/aww/comments/53k7ah/took_my_dog_on_a_car_ride_this_is_how_he_chose_to/",
             title: "Took my dog on a car ride, this is how he chose to sit",
-            type: "positive",
-            score: "0.2",
-            mixed: "1",
-            anger: "1",
-            disgust: "0.092776",
-            fear: "0.070902",
-            joy: "0.975093",
-            sadness: "0.085199"
+            sentimentType: "positive",
+            sentimentScore: "0.2",
+            sentimentMixed: "1",
+            docAnger: "1",
+            docDisgust: "0.092776",
+            docFear: "0.070902",
+            docJoy: "0.975093",
+            docSadness: "0.085199"
         }, 
         {
             url: "https://www.reddit.com/r/sanfrancisco/comments/53l6gb/caltrain_nails_their_response/",
             title: "Caltrain nails their response",
-            type: "positive",
-            score: "0.091",
-            mixed: "1",
-            anger: "1",
-            disgust: "0.092776",
-            fear: "0.070902",
-            joy: "0.875093",
-            sadness: "0.085199"
+            sentimentType: "positive",
+            sentimentScore: "0.2",
+            sentimentMixed: "1",
+            docAnger: "1",
+            docDisgust: "0.092776",
+            docFear: "0.070902",
+            docJoy: "0.395093",
+            docSadness: "0.085199"
         },
         {
             url: "https://www.reddit.com/r/LosAngeles/comments/53hysk/parking_for_rams_games_hits_200_and_up_good_news/",
             title: "Parking for Rams games hits $200 and up — good news for mass transit backers",
-            type: "negative",
-            score: "-0.2",
-            mixed: "1",
-            anger: "1",
-            disgust: "0.092776",
-            fear: "0.070902",
-            joy: "0.075093",
-            sadness: "0.085199"
+            sentimentType: "negative",
+            sentimentScore: "-0.3",
+            sentimentMixed: "1",
+            docAnger: "1",
+            docDisgust: "0.392776",
+            docFear: "0.40902",
+            docJoy: "0.975093",
+            docSadness: "0.085199"
         }
 
         ]
@@ -113,13 +113,23 @@ seeds.fakeData = function(){
 seeds.initialize = function() {
     removeAll();
 
-    var subName = "SanFrancisco";
+    var subName = "all";
 
-    parse(subName, function(finishedSub) {
+    parser.execSubredditRetrieval(subName, function(err, finishedSub) {
         console.log("finished ");
     });
 }
 
+seeds.calculate = function(subName) {
+    Subreddit.find({name:subName}).populate("posts").exec(function(err, foundSubr){
+        console.log("found subreddit obj");
+        console.log(foundSubr[0]);
+        parser.calcAvgSentiEmo(foundSubr[0], function(calcedSubr){
+            // console.log(calcedSubr);
+            calcedSubr.save();
+        });
+    });
+}
 
 
 module.exports = seeds;

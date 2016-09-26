@@ -2,13 +2,13 @@
 
 (function () {
 angular
-.module('sentimentalApp', ['ngResource'])
+.module('sentimentalApp', ['ngResource', 'chart.js'])
 .controller('subrController',
 	['$scope',
 	'$resource',
 	function ($scope, $resource) {
-		var Subreddit = $resource('/api/subreddit');
-		var Posts = $resource('api/subreddit/:subId');
+		var Subreddit = $resource('/api/subreddit/:subId');
+		// var Posts = $resource('api/subreddit/:subId');
 
 		$scope.showPosts = [];
 		$scope.postData = [];
@@ -18,6 +18,17 @@ angular
 		$scope.sortReverse = true;
 		$scope.redditUrl = "http://www.reddit.com";
 
+		$scope.anger=0.5;
+		$scope.disgust = 0.3;
+		$scope.fear = 0.6;
+		$scope.joy = 0.2;
+		$scope.sadness = 0.2;
+
+		$scope.selectedSubr = {};
+		$scope.cachedSubrs = [];
+
+		$scope.calculating = false;
+
 		$scope.getSubData = function () {
 			console.log("Getting DATA");
 			Subreddit.query(function (results) {
@@ -25,52 +36,85 @@ angular
 			});
 		};
 
-		$scope.showTopPosts = function(index, id) {
-			console.log("index! " + index);
-			if ($scope.showPosts[index] === 1) {
-        		$scope.showPosts[index] = 0;
-        	} else {
-				console.log("Getting full data for sub id: " + id);
-        		if (typeof $scope.postData[id] === 'undefined') {
-        			console.log("Loading for first time...");
-        			Posts.get({subId: id}, function (results) {
-        				console.log("results! " + results);
-						$scope.postData[id] = results;
-					});
-        		}
+		$scope.clearSearch = function() {
+			$scope.subrSearch.name = "";
+		}
 
-        		$scope.showPosts[index] = 1;
+		$scope.submitSearch = function() {
+			if ($scope.loading) {
+				console.log("already processing something!");
+			} else {
+			// verify that subreddit isn't in cache.
+			var name = $scope.subrSearch.name;
+			console.log($scope.filtered.length);
+			console.log("search submitted");
+			if(name) {
+				console.log($scope.filtered);
+				if ($scope.filtered.length === 1 && $scope.filtered[0].name.toUpperCase() === name.toUpperCase()) {
+					console.log("ALREADY EXISTS, HOMIE");
+				}
+				$scope.loading = true;
+				
+				var newSubr = new Subreddit({name: name, lastUpdated: Date.now()});
+
+				// POST call to subreddit
+				newSubr.$save(function(s, putResponseHeaders){
+					console.log("save is done, I think");
+					$scope.loading = false;
+					$scope.getSubData();
+					$scope.loadPosts(s._id);
+				});	
+			
+			} else {
+				console.log("empty search!");
+			}			
 			}
 		}
 
-		$scope.searchSubreddit = function(query) {
+		$scope.loadPosts = function(id){
+			console.log("Getting full data for sub id: " + id);
 
-
-		};
-
-		$scope.addSubreddit = function(queryText) {
-			console.log(queryText);
-
-		};
-
-		$scope.submitSearch = function() {
-			// verify that subreddit isn't in database.
-			if($scope.subrSearch.name) {
-				var name = $scope.subrSearch.name;
-				var newSubr = new Subreddit({name: name, lastUpdated: Date.now()});
-				console.log("what's happening.");
-
-				newSubr.$save(function(s, putResponseHeaders){
-					console.log("save is done, I think");
-					$scope.getSubData();
+    		if (typeof $scope.cachedSubrs[id] === 'undefined') {
+    			Subreddit.get({subId: id}, function (subr) {
+    				console.log("results! " + subr);
+    				$scope.cachedSubrs[id] = subr;
+    				$scope.selectedSubr = $scope.cachedSubrs[id];
 				});
-				
-				$scope.subrSearch.name = "";	
-			
-			} else {
-				// console.log("empty search!");
-			}			
+    		} else {
+    			console.log("returning cached posts!")
+    			$scope.selectedSubr = $scope.cachedSubrs[id];	
+    		}
 		}
+
+		// Chart stuff
+		$scope.labels = ["Anger", "Disgust", "Fear", "Joy", "Sadness"];
+		$scope.data = [
+			[$scope.anger, $scope.disgust, $scope.fear, $scope.joy, $scope.sadness]
+		];
+
+		$scope.loadChart = function(post) {
+			$scope.data = [
+				[post.docAnger, post.docDisgust, post.docFear, post.docJoy, post.docSadness]
+			];
+
+			$scope.anger = post.docAnger; 
+			$scope.disgust = post.docDisgust; 
+			$scope.fear = post.docFear;
+			$scope.joy = post.docJoy;
+			$scope.sadness = post.docSadness;
+		};
+
+		$scope.datasets = [
+	        {
+	            label: "Post Emotion",
+	            backgroundColor: "rgba(179,181,198,0.2)",
+	            borderColor: "rgba(179,181,198,1)",
+	            pointBackgroundColor: "rgba(179,181,198,1)",
+	            pointBorderColor: "#fff",
+	            pointHoverBackgroundColor: "#fff",
+	            pointHoverBorderColor: "rgba(179,181,198,1)"
+	        }
+	    ];
 
 		// initialize
 		$scope.getSubData();	

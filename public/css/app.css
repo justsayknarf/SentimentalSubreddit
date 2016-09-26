@@ -31,18 +31,9 @@ body {
 
 body {
   margin: 0;
+  padding: 1em;
   font-family: "Poiret One", cursive;
   font-weight: normal; }
-
-.search {
-  position: relative;
-  max-width: 60%;
-  margin: 1rem auto 0 auto; }
-  .search .fa-search {
-    position: absolute;
-    right: 1em;
-    top: 0.6em;
-    color: #D3D3D3; }
 
 header {
   background: white;
@@ -52,15 +43,31 @@ header {
     font-size: 2em;
     text-align: center;
     padding: 0.5em; }
+  header .search {
+    position: relative;
+    max-width: 60%;
+    margin: 1rem auto 0 auto; }
+    header .search .fa {
+      position: absolute;
+      right: 1em;
+      top: 0.6em;
+      color: #D3D3D3; }
 
 .center {
   text-align: center; }
 
-.mainContainer {
-  width: 100%;
+.container {
+  width: 70%;
   max-width: 75rem;
-  margin: 2em auto;
-  border: 1px solid #F5F5F5; }
+  padding: 1em;
+  margin: 1em; }
+
+.mainContainer {
+  width: 70%;
+  max-width: 75rem;
+  margin: 2em 1em 2em auto;
+  border: 1px solid #F5F5F5;
+  padding: 1em; }
 
 .loading {
   padding: 1em;
@@ -74,6 +81,29 @@ header {
     text-align: center; }
 
 .row {
+  margin: 0;
   margin-top: 1em; }
+
+.emotion {
+  text-align: center; }
+
+.graphContainer {
+  position: fixed;
+  top: 35%;
+  left: 0;
+  width: 30%; }
+
+#sentiColor {
+  width: 100%;
+  height: 1em; }
+
+.negative {
+  background-color: red; }
+
+.positive {
+  background-color: lightgreen; }
+
+.neutral {
+  background-color: lightgrey; }
 
 /*# sourceMappingURL=app.css.map */
