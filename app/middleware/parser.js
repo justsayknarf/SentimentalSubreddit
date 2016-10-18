@@ -10,19 +10,45 @@ var Post = require("../models/post");
 
 var argv = require('minimist')(process.argv.slice(2));
 
-var API_KEY = "";
+// var API_KEY = "5188ca56b0ba8514218671254116be6fc130ec6d";
 var AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
 
 var alchemy_language = new AlchemyLanguageV1({
-	api_key: API_KEY
+	api_key: "hibbitdyaowiefjaw",
+	"language": "english"
 });
-
 
 
 var RedditURL = "http://www.reddit.com"
 var RedditParams = "/top.json?t=week&limit=20"
 
 var parser = {};
+
+parser.setNewApiKey = function(newKey, callback) {
+	alchemy_language = new AlchemyLanguageV1({
+		api_key: newKey,
+		"language": "english"
+	});
+
+	var params = {
+				text: "this is a test!",
+				extract: 'doc-emotion',
+				showSourceText: 0,
+				language: 'english'
+			};
+
+	// test
+	alchemy_language.combined(params, function (err, response) {
+
+		if (err) {	
+			console.log(err);
+		}
+
+		else {
+			console.log(response);
+		}
+	});
+}
 
 // get and parse top 20 posts for the week in subreddit
 parser.getTopRedditPosts = function(subreddit, callback) {
@@ -91,14 +117,16 @@ parser.parseRedditPosts = function(posts, callback) {
 			var params = {
 				text: text,
 				extract: 'doc-emotion, doc-sentiment',
-				showSourceText: 0
+				showSourceText: 0,
+				language: 'english'
 			};
 
 			// get sentiment from text
 			alchemy_language.combined(params, function (err, response) {
 
-				if (err) {
-					console.log('error:', err);
+				if (err) {					
+					console.log('error at for this article: ' + post.data.permalink, err);
+					counter-=1;
 					callback(err)
 				} else {
 					console.log(post.data.title);

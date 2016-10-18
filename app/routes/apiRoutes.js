@@ -5,11 +5,12 @@ var router = express.Router();
 var Subreddit = require("../models/subreddit");
 var Post = require("../models/post");
 var parser = require("../middleware/parser");
+var middleware = require("../middleware/index");
 
 // root route - GET all subreddits in db
 // returns all subreddit info without posts.
 router.get("/subreddit", function(req, res){
-	console.log("HIT API ROUTE");
+	console.log("HIT API GET ALL SUBREDDIT ROUTE");
 	Subreddit.find({}, function(err, allSubrData){
         if(err){
             console.log(err);
@@ -21,8 +22,7 @@ router.get("/subreddit", function(req, res){
 });
 
 // CREATE new subreddit, parses and retrieves all post info
-router.post("/subreddit", function(req, res){
-	
+router.post("/subreddit", middleware.isLoggedIn, function(req, res){
 	console.log("POST ROUTE HIT - " + req.body.name);
 	parser.execSubredditRetrieval(req.body.name, function(err, subreddit) {
 		if(err) {
@@ -37,6 +37,20 @@ router.post("/subreddit", function(req, res){
 	});
 });
 
+// USE NEW API KEY
+router.post("/key", function(req, res){
+	console.log("POST APIKEY ROUTE HIT " + req.body.apikey);
+	parser.setNewAPI(req.body.apikey, function(err) {
+		if (err) {
+			console.log(err);
+			res.json({"status":"bad api key!"});
+		} else {
+			console.log("new api key accepted!");
+			res.json({"status": "ok"});
+		}
+	});
+})
+
 // single subreddit GET route: returns subreddit object with posts populated
 router.get("/subreddit/:id", function(req, res){
 	console.log("HIT API GET ROUTE for posts, id: " + req.params.id);
@@ -49,6 +63,7 @@ router.get("/subreddit/:id", function(req, res){
         }
     });
 });
+
 
 
 

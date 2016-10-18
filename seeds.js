@@ -110,14 +110,35 @@ seeds.fakeData = function(){
     });
 }
 
+var emptySub = {
+    name: "empty",
+    sentimentScore: 0,
+    docAnger: 0,
+    docDisgust: 0,
+    docFear: 0,
+    docJoy: 0,
+    docSadness: 0,
+    lastUpdated: 0,
+    posts: []
+};
+
+
 seeds.initialize = function() {
     removeAll();
 
     var subName = "all";
 
-    parser.execSubredditRetrieval(subName, function(err, finishedSub) {
-        console.log("finished ");
-    });
+    // Subreddit.create(emptySub, function(err, subreddit){
+    //     if(err){ 
+    //         console.log(err);
+    //     } else {
+    //         console.log("created empty sub");
+    //     }
+
+        parser.execSubredditRetrieval(subName, function(err, finishedSub) {
+            console.log("finished ");
+        });
+    // });
 }
 
 seeds.calculate = function(subName) {

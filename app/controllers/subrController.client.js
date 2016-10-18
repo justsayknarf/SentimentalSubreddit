@@ -1,11 +1,10 @@
-'use strict';
+// 'use strict';
 
 (function () {
 angular
-.module('sentimentalApp', ['ngResource', 'chart.js'])
+.module('sentimentalApp')
 .controller('subrController',
-	['$scope',
-	'$resource',
+	['$scope','$resource',
 	function ($scope, $resource) {
 		var Subreddit = $resource('/api/subreddit/:subId');
 		// var Posts = $resource('api/subreddit/:subId');
@@ -24,10 +23,15 @@ angular
 		$scope.joy = 0.2;
 		$scope.sadness = 0.2;
 
+		$scope.precision = 5;
+
 		$scope.selectedSubr = {};
 		$scope.cachedSubrs = [];
 
+		$scope.apikey = "";
+
 		$scope.calculating = false;
+
 
 		$scope.getSubData = function () {
 			console.log("Getting DATA");
@@ -35,6 +39,16 @@ angular
 				$scope.subrList = results;
 			});
 		};
+
+		$scope.useApiKey = function() {
+			$http.post('/api/key', $scope.apikey)
+                .success(function(data) {         
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                });
+		}
 
 		$scope.clearSearch = function() {
 			$scope.subrSearch.name = "";
@@ -44,30 +58,32 @@ angular
 			if ($scope.loading) {
 				console.log("already processing something!");
 			} else {
-			// verify that subreddit isn't in cache.
-			var name = $scope.subrSearch.name;
-			console.log($scope.filtered.length);
-			console.log("search submitted");
-			if(name) {
-				console.log($scope.filtered);
-				if ($scope.filtered.length === 1 && $scope.filtered[0].name.toUpperCase() === name.toUpperCase()) {
-					console.log("ALREADY EXISTS, HOMIE");
-				}
-				$scope.loading = true;
-				
-				var newSubr = new Subreddit({name: name, lastUpdated: Date.now()});
+				// verify that subreddit isn't in cache.
+				var name = $scope.subrSearch.name;
+				console.log($scope.filtered.length);
+				console.log("search submitted");
+				if(name) {
+					console.log($scope.filtered);
+					if ($scope.filtered.length === 1 && $scope.filtered[0].name.toUpperCase() === name.toUpperCase()) {
+						console.log("ALREADY EXISTS, HOMIE");
+						// TODO: refresh code
+					} else {
+						$scope.loading = true;
+					
+						var newSubr = new Subreddit({name: name, lastUpdated: Date.now()});
 
-				// POST call to subreddit
-				newSubr.$save(function(s, putResponseHeaders){
-					console.log("save is done, I think");
-					$scope.loading = false;
-					$scope.getSubData();
-					$scope.loadPosts(s._id);
-				});	
-			
-			} else {
-				console.log("empty search!");
-			}			
+						// POST call to subreddit
+						newSubr.$save(function(s, putResponseHeaders){
+							console.log("save is done, I think");
+							console.log(s);
+							$scope.loading = false;
+							$scope.getSubData();
+							$scope.loadPosts(s._id);
+						});	
+					}
+				} else {
+					console.log("empty search!");
+				}			
 			}
 		}
 

@@ -1,0 +1,142 @@
+<!--    <div ng-controller='subrController'>  --> 
+      <header>
+         <h1 class="clementine-text">Sentimental Subreddits</h1>
+         <div class="search">
+         <form name="searchForm" ng-submit="submitSearch()" novalidate>
+            <span ng-show="subrSearch.name.length > 0" ng-click="clearSearch()" class="fa fa-close"></span>
+            <span ng-hide="subrSearch.name.length > 0" class="fa fa-search"></span>
+            <input type="search" placeholder="Look up a subreddit" ng-model="subrSearch.name" ng-disabled="loading">
+            <!-- <button type="submit" class="button">Submit</button> -->
+         </form>
+         provide apikey: 
+         <form name="searchForm" ng-submit="useApiKey()" novalidate>
+           <input type="text" placeholder="API_KEY" ng-model="apikey"> 
+         </form>
+         <span ng-show="loading"> LOADING DATA, SIT TIGHT </span>
+      </div>
+      <a href="/login">login</a>
+      </header>
+
+      <div class="graphContainer">
+            <canvas id="radar" class="chart chart-radar"
+                    chart-data="data" chart-options="options" chart-labels="labels">
+            </canvas>
+            <div class="row emotion">
+            <table class="table">
+               <tbody>
+                  <tr>
+                     <td>Anger: </td>
+                     <td> {{ anger | number: precision }}</td>
+                  </tr>
+                  <tr>
+                     <td>Disgust: </td>
+                     <td> {{ disgust | number: precision}}</td>
+                  </tr> 
+                  <tr>
+                     <td>Fear: </td>
+                     <td> {{ fear | number: precision}}</td>
+                  </tr>
+                  <tr>
+                     <td>Joy: </td>
+                     <td> {{ joy | number: precision}}</td>
+                  </tr> 
+                  <tr>
+                     <td>Sadness: </td>
+                     <td> {{ sadness | number: precision }}</td>
+                  </tr>             
+
+               </tbody>
+            </table>
+<!--             <ul>
+            <li><p>Anger: {{ anger }}</p></li>
+            <li><p>Disgust: {{ disgust }}</p></li>
+            <li><p>Fear: {{ fear }}</p></li>
+            <li><p>Joy: {{ joy }}</p></li>
+            <li><p>Sadness: {{ sadness }}</p> </li>      
+            </ul> -->
+            </div>
+      </div>
+
+      <div class="mainContainer">
+         <div class="graphContainer">
+            <canvas id="radar" class="chart chart-radar"
+                    chart-data="data" chart-options="options" chart-labels="labels">
+            </canvas>
+         </div>
+         
+
+         <div class="row">
+            <div class="small-12 columns">
+               <div class="alert">
+                  <p>Sort Type: {{ sortType }}</p>
+                  <p>Sort Reverse: {{ sortReverse }}</p>
+                  <p>Search Query: {{ subrSearch }}</p>        
+               </div>
+            </div>
+         </div>
+
+         <div class="row">
+            <p ><span ng-hide="subrList.length > filtered.length">{{subrList.length}} subreddits! </span><span ng-hide="filtered.length === subrList.length">{{filtered.length}} filtered subreddits. </span>
+            <a href="#" ng-show="subrSearch.name.length > 0" ng-click="clearSearch()">Clear filter</a></p><br>
+            <p ></p>
+            <p ng-hide="filtered.length">Subreddit not in database yet! <a ng-click="submitSearch()">Add?</a></p>
+         </div>
+         <div class="row">
+            <div class="small-12 columns">
+               <table class="table table-bordered table-striped">
+                  <thead>
+                     <tr>
+                        <td>
+                        <a href="#" ng-click="sortType = 'name'; sortReverse = !sortReverse">
+                           Subreddits 
+                           <span ng-show="sortType == 'name'" class="fa fa-caret-down"></span>
+                        </a>
+                        </td>
+                        <td>
+                        <a href="#" ng-click="sortType = 'sentiment'; sortReverse = !sortReverse">
+                        Overall Sentiment 
+                        <span ng-show="sortType == 'sentiment'" class="fa fa-caret-down"></span>
+                        </a>
+                        </td>
+                        <td>
+                        <a href="#" ng-click="sortType = 'lastUpdated'; sortReverse = !sortReverse">
+                        Last Updated
+                        <span ng-show="sortType == 'lastUpdated'" class="fa fa-caret-down"></span>
+                        </a>
+                        </td>
+                     </tr>
+               </thead>
+               <tbody>
+                  <tr ng-repeat="subreddit in subrList | orderBy:sortType:sortReverse | filter:subrSearch as filtered" ng-mouseover="loadChart(subreddit)">
+                     <td ng-click="loadPosts(subreddit._id)">{{ subreddit.name }}</td>
+                     <td>{{ subreddit.sentimentScore | number: precision }}</td>
+                     <td>{{ subreddit.lastUpdated | date:'yyyy-MM-dd HH:mm' }}</td>
+                  </tr>
+               </tbody> 
+            </table> 
+            </div>
+         </div>
+
+      <hr>
+      <div class="row">
+         <div class="small-12 columns">
+            <h2>Posts for subreddit: {{ selectedSubr.name }}</h2>
+         </div>
+      </div>
+      <div class="row">
+      <ul>
+         <li ng-repeat="post in selectedSubr.posts">
+            <div ng-mouseover="loadChart(post)" class="row"> 
+            <div class="large-2 columns">
+               <div id="sentiColor" ng-class="post.sentimentType"></div>
+            </div>
+            <div class="large-10 columns">
+            <a href="{{redditUrl + post.url}}">{{post.title}}</a><br>
+            Sentiment: {{post.sentimentType}} <span ng-hide="post.sentimentType === 'neutral'">// Score: {{post.sentimentScore}} </span>
+            </div>
+            </div>
+            <hr>  
+         </li>
+      </ul>
+      </div>
+<!--    </div> -->

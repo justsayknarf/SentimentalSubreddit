@@ -60,7 +60,7 @@ header {
   width: 70%;
   max-width: 75rem;
   padding: 1em;
-  margin: 1em; }
+  margin: 1em auto; }
 
 .mainContainer {
   width: 70%;
@@ -86,10 +86,13 @@ header {
 
 .emotion {
   text-align: center; }
+  .emotion table {
+    width: 70%;
+    margin: 1em auto; }
 
 .graphContainer {
   position: fixed;
-  top: 35%;
+  top: 12em;
   left: 0;
   width: 30%; }
 

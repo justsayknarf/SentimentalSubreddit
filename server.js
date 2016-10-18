@@ -6,6 +6,8 @@ var express     = require('express'),
     bodyParser  = require("body-parser"),
     passport    = require("passport"),
     LocalStrategy = require("passport-local"),
+    flash       = require("connect-flash"),
+    User       = require("./app/models/user"),
     passportLocalMongoose = require("passport-local-mongoose");
 
 var app = express();
@@ -20,21 +22,31 @@ var indexRoutes       = require("./app/routes/index.js"),
 var initialize            = require("./app/middleware/parser.js");
 
 // PASSPORT CONFIGURATION
-// app.use(require("express-session")({
-//     secret: "This is the secret",
-//     resave: false,
-//     saveUninitialized: false
-// }));
+app.use(require("express-session")({
+    secret: "This is the secret",
+    resave: false,
+    saveUninitialized: false
+}));
 
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
-// passport.use(new LocalStrategy(User.authenticate()));
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use(flash());
+
+app.use(function(req, res, next){
+    res.locals.currentUser = req.user;
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
+    next();
+});
 
 
-mongoose.connect('mongodb://localhost:27017/sentimentalsubreddit', function (err, db) {
+// mongoose.connect('mongodb://knarf:sentiment@ds041546.mlab.com:41546/heroku_wkv6bcdp', function (err, db) {
+mongoose.connect('mongodb://localhost:27017/', function (err, db) {
 
   if (err) {
     throw new Error('Database failed to connect!');
