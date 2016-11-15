@@ -11,5 +11,9 @@ Displays results.
 ## Under development ##
 Eventually, this will be a webapp that monitors ongoing sentiment and emotions for subreddits over time, using node in the backend to update stored subreddit sentiment daily. 
 
+Continuing to explore other Sentiment Analysis APIs and trying to understand basic NLP concepts to see if there are benefits of combining the multiple analyses. 
+
+In the process of exploring other data analysis framework to familiarize myself with data visualization (D3).
+
 Webapp built using HTML/CSS/Angular in the frontend, Node/Mongo in the back. 
 
